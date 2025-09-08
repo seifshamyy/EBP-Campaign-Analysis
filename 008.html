@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Campaigns Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0f0c;
+    --panel:#0e1411;
+    --panel-2:#0f1713;
+    --card:#111b15;
+    --ink:#e7f5ec;
+    --muted:#adccb9;
+    --accent:#29d27a;
+    --accent-2:#22b86a;
+    --accent-3:#8ef7c2;
+    --ring: 0 0 0 2px rgba(41,210,122,.35), 0 10px 30px rgba(41,210,122,.15), inset 0 0 30px rgba(41,210,122,.05);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(1000px 600px at 85% -20%, rgba(46,255,160,.12), transparent 55%),
+      radial-gradient(900px 700px at -10% 110%, rgba(20,140,90,.25), transparent 60%),
+      linear-gradient(180deg, #08100c, #0a120e 30%, #0b120e 100%);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  .shell{
+    max-width:1100px;
+    margin:0 auto;
+    padding:28px clamp(16px,4vw,32px) 64px;
+  }
+  .hero{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:28px;
+  }
+  .title{
+    font-weight:800;
+    letter-spacing:.2px;
+    line-height:1.05;
+    font-size: clamp(24px, 3vw, 34px);
+    background: linear-gradient(120deg,#eafff3 0%, #b7ffdb 35%, #8ef7c2 60%, #eafff3 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 0 35px rgba(46,255,160,.1);
+  }
+  .subtitle{
+    margin-top:6px;
+    color:var(--muted);
+    font-weight:400;
+  }
+  .panel{
+    background:linear-gradient(180deg,rgba(255,255,255,.01),rgba(255,255,255,0)) , var(--panel);
+    border:1px solid rgba(78,159,120,.18);
+    border-radius:18px;
+    box-shadow: var(--ring);
+    overflow:hidden;
+  }
+  .panel header{
+    padding:18px 20px;
+    border-bottom:1px solid rgba(78,159,120,.18);
+    background:linear-gradient(180deg, rgba(41,210,122,.08), transparent);
+  }
+  .panel header h2{
+    margin:0;font-size:15px;font-weight:700;letter-spacing:.4px;color:#c6f3da;text-transform:uppercase;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap:16px;
+  }
+  @media (max-width:980px){ .grid{grid-template-columns: 1fr;}}
+  .block{padding:16px}
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.05)) , var(--card);
+    border:1px solid rgba(78,159,120,.16);
+    border-radius:14px;
+    padding:14px;
+  }
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  label{font-size:12px;color:#c6e9d4;letter-spacing:.2px;font-weight:600;text-transform:uppercase}
+  input, select, button{
+    font:inherit;color:var(--ink);
+    background:#0c1612;border:1px solid rgba(78,159,120,.25);
+    border-radius:12px;padding:12px 14px;outline:none;
+    transition:.2s ease;min-width:0;
+  }
+  input:focus,select:focus{box-shadow:0 0 0 2px rgba(41,210,122,.35)}
+  .search{
+    flex:1 1 260px;display:flex;gap:10px;align-items:center;
+    background:#0c1612;border-radius:12px;border:1px solid rgba(78,159,120,.25);padding:8px 10px;
+  }
+  .search input{flex:1;border:none;background:transparent;padding:6px 8px}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{
+    cursor:pointer;background:linear-gradient(180deg,var(--accent),var(--accent-2));
+    color:#062412;border:none;font-weight:800;letter-spacing:.2px;
+    padding:12px 16px;border-radius:12px;box-shadow:0 10px 30px rgba(41,210,122,.25), inset 0 -1px 0 rgba(0,0,0,.2);
+  }
+  .btn.secondary{
+    background:linear-gradient(180deg,#16261f,#111d17);
+    color:#d6ffe9;border:1px solid rgba(78,159,120,.35);
+  }
+  .btn.ghost{
+    background:transparent;border:1px dashed rgba(78,159,120,.35);color:#cfeede
+  }
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:640px){ .split{grid-template-columns:1fr}}
+  .small{font-size:12px;color:var(--muted)}
+  .stat{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px dashed rgba(78,159,120,.25);border-radius:12px;background:#0b1511}
+  .count{font-weight:800;color:#b8ffd7}
+  select{width:100%}
+  .list{
+    max-height:320px;overflow:auto;border:1px solid rgba(78,159,120,.2);border-radius:12px;background:#0b1511
+  }
+  .list option{padding:8px}
+  .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+  #analysis{
+    min-height:260px;white-space:pre-wrap;border-radius:14px;padding:16px;background:#0a1411;
+    border:1px solid rgba(78,159,120,.2);line-height:1.45
+  }
+  .footer-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;margin-top:10px}
+  .status{padding:10px 12px;border-radius:10px;background:#0b1511;border:1px solid rgba(78,159,120,.25);color:#cde9db}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(41,210,122,.12);border:1px solid rgba(41,210,122,.35);color:#c9ffe2;font-size:12px;font-weight:700}
+  .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+  @media (max-width:900px){.kpi{grid-template-columns:repeat(2,1fr)}}
+  .kpi .card{padding:12px}
+  .kpi .card h3{margin:0 0 2px 0;font-size:12px;color:#c6e9d4;text-transform:uppercase;letter-spacing:.3px}
+  .kpi .card div{font-weight:800;font-size:18px;color:#e8fff3}
+</style>
+</head>
+<body>
+  <div class="shell">
+    <div class="hero">
+      <div>
+        <div class="title">Hey Mohamed! Let’s see how we can make your ads better.</div>
+        <div class="subtitle">Live campaign directory with analysis on demand</div>
+      </div>
+      <div class="pill" id="statusPill">Idle</div>
+    </div>
+
+    <section class="panel">
+      <header><h2>Campaign Directory</h2></header>
+      <div class="block">
+        <div class="grid">
+          <div class="card">
+            <div class="row" style="margin-bottom:10px">
+              <label>Search</label>
+              <div class="search" style="width:100%">
+                <input id="searchInput" type="text" placeholder="Filter by ID or name…" autocomplete="off" />
+                <button class="btn secondary" id="loadBtn">Load Campaigns</button>
+              </div>
+            </div>
+            <div class="split" style="margin-bottom:10px">
+              <div class="stat"><span class="small">Loaded</span> <span class="count" id="loadedCount">0</span> <span class="small">campaigns</span></div>
+              <div class="stat"><span class="small">Filtered</span> <span class="count" id="filteredCount">0</span></div>
+            </div>
+            <select id="campaignList" class="list" size="12"></select>
+            <div class="split" style="margin-top:10px">
+              <div>
+                <label>Manual Campaign ID</label>
+                <input id="manualId" type="text" placeholder="Paste a Campaign ID" class="mono" />
+              </div>
+              <div>
+                <label>Selected Campaign</label>
+                <input id="selectedId" type="text" class="mono" readonly />
+              </div>
+            </div>
+            <div class="actions" style="margin-top:12px">
+              <button class="btn" id="analyzeBtn">Analyze</button>
+              <button class="btn ghost" id="copyIdBtn">Copy ID</button>
+              <button class="btn ghost" id="downloadBtn">Download HTML</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="kpi">
+              <div class="card"><h3>Directory</h3><div id="kpiDir">–</div></div>
+              <div class="card"><h3>Platform</h3><div id="kpiPlat">Meta</div></div>
+              <div class="card"><h3>Mode</h3><div id="kpiMode">Listing + Analysis</div></div>
+              <div class="card"><h3>Status</h3><div id="kpiStatus">Idle</div></div>
+            </div>
+            <div style="margin-top:14px">
+              <label>Analysis Output</label>
+              <div id="analysis" class="mono"></div>
+              <div class="footer-actions">
+                <button class="btn secondary" id="copyAnalysisBtn">Copy Analysis</button>
+                <button class="btn ghost" id="clearAnalysisBtn">Clear</button>
+              </div>
+            </div>
+            <div style="margin-top:10px" class="small" id="debugArea"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+(function(){
+  const LIST_URL = 'https://primary-production-9e01d.up.railway.app/webhook/88011745-0650-4fdc-9caa-628ed08eab95';
+  const ANALYSIS_URL = 'https://primary-production-9e01d.up.railway.app/webhook/d7b7b663-e181-46b1-9b11-3dafe594db8e';
+
+  const statusPill = document.getElementById('statusPill');
+  const kpiDir = document.getElementById('kpiDir');
+  const kpiStatus = document.getElementById('kpiStatus');
+  const loadedCount = document.getElementById('loadedCount');
+  const filteredCount = document.getElementById('filteredCount');
+  const searchInput = document.getElementById('searchInput');
+  const list = document.getElementById('campaignList');
+  const selectedId = document.getElementById('selectedId');
+  const manualId = document.getElementById('manualId');
+  const analysisBox = document.getElementById('analysis');
+  const debugArea = document.getElementById('debugArea');
+  const loadBtn = document.getElementById('loadBtn');
+  const analyzeBtn = document.getElementById('analyzeBtn');
+  const copyIdBtn = document.getElementById('copyIdBtn');
+  const copyAnalysisBtn = document.getElementById('copyAnalysisBtn');
+  const clearAnalysisBtn = document.getElementById('clearAnalysisBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+
+  let campaignsRaw = [];
+  let campaignsParsed = [];
+  let filtered = [];
+
+  function setStatus(text){
+    statusPill.textContent = text;
+    kpiStatus.textContent = text;
+  }
+
+  function setDirectoryKpi(n){
+    kpiDir.textContent = n > 0 ? `${n} loaded` : '–';
+  }
+
+  function parseCampaignLine(line){
+    if (typeof line !== 'string') return null;
+    const clean = line.replace(/\r/g,'').trim();
+    const idx = clean.indexOf(' - ');
+    if (idx === -1) {
+      const idOnly = clean.trim();
+      return { id: idOnly, name: '' };
+    }
+    const id = clean.slice(0, idx).trim();
+    const name = clean.slice(idx + 3).replace(/\s+/g,' ').trim();
+    return { id, name };
+  }
+
+  function normalizeListingPayload(data){
+    try{
+      if (!data) return [];
+      const root = Array.isArray(data) ? data[0] : data;
+      if (!root) return [];
+      const arr = root['all campaigns'] || root['all_campaigns'] || root['campaigns'] || [];
+      if (!Array.isArray(arr)) return [];
+      const unique = new Map();
+      for (const item of arr){
+        const parsed = parseCampaignLine(item);
+        if (parsed && parsed.id){
+          unique.set(parsed.id, parsed);
+        }
+      }
+      return Array.from(unique.values());
+    }catch(e){
+      return [];
+    }
+  }
+
+  async function fetchJson(url, options={}){
+    const controller = new AbortController();
+    const t = setTimeout(()=>controller.abort(), 100000);
+    try{
+      const res = await fetch(url, {mode:'cors', credentials:'omit', cache:'no-store', signal:controller.signal, ...options});
+      const text = await res.text();
+      let json;
+      try { json = JSON.parse(text); } catch { json = text; }
+      return { ok: res.ok, status: res.status, data: json, raw: text };
+    }catch(err){
+      return { ok:false, status:0, data:null, raw:String(err && err.message || err) };
+    }finally{
+      clearTimeout(t);
+    }
+  }
+
+  function renderList(items){
+    list.innerHTML = '';
+    for (const c of items){
+      const o = document.createElement('option');
+      o.value = c.id;
+      o.textContent = `${c.id} — ${c.name || ''}`.trim();
+      list.appendChild(o);
+    }
+    filtered = items;
+    filteredCount.textContent = String(items.length);
+  }
+
+  function applyFilter(){
+    const q = searchInput.value.trim().toLowerCase();
+    if (!q){
+      renderList(campaignsParsed);
+      return;
+    }
+    const out = campaignsParsed.filter(c =>
+      c.id.toLowerCase().includes(q) || (c.name||'').toLowerCase().includes(q)
+    );
+    renderList(out);
+  }
+
+  async function loadCampaigns(){
+    setStatus('Loading campaigns');
+    debugArea.textContent = '';
+    const res = await fetchJson(LIST_URL, { method:'GET' });
+    if (!res.ok){
+      setStatus('List failed');
+      debugArea.textContent = `Listing error [${res.status}]: ${res.raw}`;
+      campaignsParsed = [];
+      loadedCount.textContent = '0';
+      filteredCount.textContent = '0';
+      renderList([]);
+      setDirectoryKpi(0);
+      return;
+    }
+    let payload = res.data;
+    if (typeof payload === 'string'){
+      try{ payload = JSON.parse(payload); }catch{}
+    }
+    campaignsRaw = payload;
+    campaignsParsed = normalizeListingPayload(payload);
+    loadedCount.textContent = String(campaignsParsed.length);
+    setDirectoryKpi(campaignsParsed.length);
+    renderList(campaignsParsed);
+    setStatus('Ready');
+  }
+
+  list.addEventListener('change', ()=>{
+    const val = list.value || '';
+    selectedId.value = val;
+  });
+
+  searchInput.addEventListener('input', ()=>{
+    window.clearTimeout(searchInput._t);
+    searchInput._t = setTimeout(applyFilter, 120);
+  });
+
+  loadBtn.addEventListener('click', loadCampaigns);
+
+  copyIdBtn.addEventListener('click', async ()=>{
+    const id = selectedId.value || manualId.value || '';
+    if (!id){ setStatus('No ID'); return; }
+    try{
+      await navigator.clipboard.writeText(id);
+      setStatus('ID copied');
+    }catch{
+      setStatus('Copy failed');
+    }
+  });
+
+  clearAnalysisBtn.addEventListener('click', ()=>{
+    analysisBox.textContent = '';
+    debugArea.textContent = '';
+    setStatus('Cleared');
+  });
+
+  copyAnalysisBtn.addEventListener('click', async ()=>{
+    try{
+      await navigator.clipboard.writeText(analysisBox.textContent || '');
+      setStatus('Analysis copied');
+    }catch{
+      setStatus('Copy failed');
+    }
+  });
+
+  downloadBtn.addEventListener('click', ()=>{
+    const blob = new Blob([document.documentElement.outerHTML], {type:'text/html;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'campaigns_analysis_tool.html';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    setStatus('Downloaded');
+  });
+
+  async function analyze(campaignId){
+    if (!campaignId) { setStatus('No ID'); return; }
+    setStatus('Analyzing');
+    debugArea.textContent = '';
+    analysisBox.textContent = '';
+
+    const tryPost = await fetchJson(ANALYSIS_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ campaign_id: campaignId })
+    });
+
+    let result = tryPost;
+    if (!tryPost.ok){
+      const url = ANALYSIS_URL + '?campaign_id=' + encodeURIComponent(campaignId);
+      const tryGet = await fetchJson(url, { method:'GET' });
+      result = tryGet;
+    }
+
+    if (!result.ok){
+      analysisBox.textContent = '';
+      debugArea.textContent = `Analysis error [${result.status}]: ${result.raw}`;
+      setStatus('Analysis failed');
+      return;
+    }
+
+    let payload = result.data;
+    if (typeof payload === 'string'){
+      try{ payload = JSON.parse(payload); }catch{/*keep string*/}
+    }
+
+    let analysisText = '';
+    if (payload && typeof payload === 'object' && !Array.isArray(payload) && 'analysis' in payload){
+      analysisText = String(payload.analysis ?? '').trim();
+    } else if (Array.isArray(payload) && payload.length && typeof payload[0] === 'object' && 'analysis' in payload[0]) {
+      analysisText = String(payload[0].analysis ?? '').trim();
+    } else if (typeof payload === 'string'){
+      analysisText = payload.trim();
+    } else {
+      analysisText = JSON.stringify(payload, null, 2);
+    }
+
+    analysisBox.textContent = analysisText || '';
+    setStatus('Done');
+  }
+
+  analyzeBtn.addEventListener('click', ()=>{
+    const id = (selectedId.value || '').trim() || (manualId.value || '').trim();
+    analyze(id);
+  });
+
+  loadCampaigns();
+})();
+</script>
+</body>
+</html>
