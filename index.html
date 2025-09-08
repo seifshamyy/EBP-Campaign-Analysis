@@ -275,7 +275,7 @@
 
   async function fetchJson(url, options={}){
     const controller = new AbortController();
-    const t = setTimeout(()=>controller.abort(), 100000);
+    const t = setTimeout(()=>controller.abort(), 300000);
     try{
       const res = await fetch(url, {mode:'cors', credentials:'omit', cache:'no-store', signal:controller.signal, ...options});
       const text = await res.text();
