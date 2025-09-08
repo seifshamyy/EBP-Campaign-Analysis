@@ -175,6 +175,35 @@
                 <input id="selectedId" type="text" class="mono" readonly />
               </div>
             </div>
+
+            <!-- New: Date Preset dropdown -->
+            <div style="margin-top:10px">
+              <label>Date Preset</label>
+              <select id="datePreset">
+                <option value="today">today</option>
+                <option value="yesterday">yesterday</option>
+                <option value="this_month">this_month</option>
+                <option value="last_month">last_month</option>
+                <option value="this_quarter">this_quarter</option>
+                <option value="maximum">maximum</option>
+                <option value="data_maximum">data_maximum</option>
+                <option value="last_3d">last_3d</option>
+                <option value="last_7d" selected>last_7d</option>
+                <option value="last_14d">last_14d</option>
+                <option value="last_28d">last_28d</option>
+                <option value="last_30d">last_30d</option>
+                <option value="last_90d">last_90d</option>
+                <option value="last_week_mon_sun">last_week_mon_sun</option>
+                <option value="last_week_sun_sat">last_week_sun_sat</option>
+                <option value="last_quarter">last_quarter</option>
+                <option value="last_year">last_year</option>
+                <option value="this_week_mon_today">this_week_mon_today</option>
+                <option value="this_week_sun_today">this_week_sun_today</option>
+                <option value="this_year">this_year</option>
+              </select>
+            </div>
+            <!-- End new block -->
+
             <div class="actions" style="margin-top:12px">
               <button class="btn" id="analyzeBtn">Analyze</button>
               <button class="btn ghost" id="copyIdBtn">Copy ID</button>
@@ -226,6 +255,9 @@
   const copyAnalysisBtn = document.getElementById('copyAnalysisBtn');
   const clearAnalysisBtn = document.getElementById('clearAnalysisBtn');
   const downloadBtn = document.getElementById('downloadBtn');
+
+  /* New: capture date preset element */
+  const datePreset = document.getElementById('datePreset');
 
   let campaignsRaw = [];
   let campaignsParsed = [];
@@ -399,12 +431,12 @@
     const tryPost = await fetchJson(ANALYSIS_URL, {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ campaign_id: campaignId })
+      body: JSON.stringify({ campaign_id: campaignId, ["date preset"]: (datePreset ? datePreset.value : "") })
     });
 
     let result = tryPost;
     if (!tryPost.ok){
-      const url = ANALYSIS_URL + '?campaign_id=' + encodeURIComponent(campaignId);
+      const url = ANALYSIS_URL + '?campaign_id=' + encodeURIComponent(campaignId) + '&' + encodeURIComponent('date preset') + '=' + encodeURIComponent(datePreset ? datePreset.value : '');
       const tryGet = await fetchJson(url, { method:'GET' });
       result = tryGet;
     }
