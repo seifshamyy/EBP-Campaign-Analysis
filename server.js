@@ -1,31 +1,39 @@
+// Minimal Express server to host the static app on Railway or any Node host
+// Save this file at the project root, alongside package.json
+// Serve /public (or current dir) and default to index.html
+
 const express = require('express');
-const compression = require('compression');
 const path = require('path');
+const compression = require('compression');
 
 const app = express();
-app.disable('x-powered-by');
+const PORT = process.env.PORT || 3000;
+
+// gzip
 app.use(compression());
 
-// serve all static assets from the repo root
-app.use(express.static(__dirname, {
-  setHeaders(res, filePath) {
-    if (/\.html?$/.test(filePath)) {
-      res.setHeader('Cache-Control', 'no-store');
-    } else {
-      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+// static
+const publicDir = path.join(__dirname);
+app.use(express.static(publicDir, {
+  etag: true,
+  lastModified: true,
+  maxAge: '1h',
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache');
     }
   }
 }));
 
-// healthcheck (optional)
+// health
 app.get('/healthz', (_req, res) => res.status(200).send('ok'));
 
-// send index.html for all other routes
+// fallback to index.html
 app.get('*', (_req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(publicDir, 'index.html'));
 });
 
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`listening on ${PORT}`);
+  console.log(`Server listening on :${PORT}`);
 });
+
