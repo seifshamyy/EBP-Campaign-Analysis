@@ -1,15 +1,16 @@
 {
-  "name": "campaign-console",
+  "name": "ebp-campaign-analysis",
   "version": "1.0.0",
   "private": true,
-  "description": "Minimal static host for campaign listing + analysis UI",
+  "description": "EBP Campaigns Intelligence — static frontend with job-based polling",
+  "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "NODE_ENV=development node server.js"
   },
   "dependencies": {
     "compression": "^1.7.4",
-    "express": "^4.19.2",
-    "path": "^0.12.7"
+    "express": "^4.19.2"
   },
   "engines": {
     "node": ">=18"
